@@ -41,8 +41,14 @@ class Controller {
     const { seller_id } = req.params;
     const { _id: userID } = req.user;
 
-    if (!(await User.findById(seller_id))) {
-      return sendError(next, "Invalid seller ID");
+    let seller;
+    try {
+      seller = await User.findById(seller_id).select("id").lean();
+      if (!seller) {
+        return sendError(next, "Invalid seller ID");
+      }
+    } catch (err) {
+      return next(err);
     }
     const catalog = await Catalog.findOne({ seller: seller_id })
       .select("_id")
@@ -60,7 +66,7 @@ class Controller {
       return next(err);
     }
 
-    return sendSuccess(res, newOrder);
+    return sendSuccess(res, newOrder, "Order has been created successfully");
   }
 }
 

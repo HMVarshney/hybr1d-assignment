@@ -23,8 +23,6 @@ class Controller {
       product.catalog = catalog._id;
     });
 
-    console.log(products);
-
     try {
       products = await Product.create(products);
     } catch (err) {
