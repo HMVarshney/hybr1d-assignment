@@ -1,6 +1,7 @@
 const { sendSuccess } = require("../../utils/response");
 const Product = require("../product/product.model");
 const Catalog = require("../catalog/catalog.model");
+const Order = require("../order/order.model");
 
 class Controller {
   async createCatalog(req, res, next) {
@@ -31,6 +32,19 @@ class Controller {
     }
 
     return sendSuccess(res, products);
+  }
+
+  async myOrders(req, res, next) {
+    const { _id: userID } = req.user;
+
+    let orders;
+    try {
+      orders = await Order.find({ seller: userID }).populate("buyer products");
+    } catch (err) {
+      return next(err);
+    }
+
+    return sendSuccess(res, orders);
   }
 }
 
