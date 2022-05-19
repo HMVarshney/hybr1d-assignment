@@ -1,4 +1,5 @@
 const { roles } = require("../../config/roles");
+const { getPaginate } = require("../../utils/db");
 const { sendSuccess, sendError } = require("../../utils/response");
 const Catalog = require("../catalog/catalog.model");
 const Order = require("../order/order.model");
@@ -8,8 +9,9 @@ const User = require("../user/user.model");
 class Controller {
   async listSellers(req, res, next) {
     let sellers;
+    req.query.role = roles[1];
     try {
-      sellers = await User.find({ role: roles[1] });
+      sellers = await getPaginate(req, User);
     } catch (err) {
       return next(err);
     }
